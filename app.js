@@ -10,6 +10,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use("/restaurant",restRouter);
 
-app.listen(5000,()=>{
+app.listen(3000,()=>{
     console.log("Server Started Mongo Mezbaan . . .");
 })
