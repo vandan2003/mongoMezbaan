@@ -1,4 +1,3 @@
-import { request, response } from "express";
 import { validationResult } from "express-validator";
 import { Restaurant } from "../models/restaurant.model.js";
 import jwt from "jsonwebtoken";
