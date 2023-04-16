@@ -107,23 +107,36 @@ export const updatePassword = async (request,response)=>{
 }
 
 export const addToFavourite = async (request,response,next)=>{
-    let record= await Favourite.findOne(
-        {
-            restaurantId:request.params.resId,
-            customerId:request.params.cusId
-         });
-   if(record)
-        return response.status(200).json({ message: "alredy added",status: true });
-    let favourite =await Favourite.create({restaurantId :request.params.resId , customerId:request.params.cusId});
-    return response.status(200).json({ favourite : favourite , status: true });
+    try{
+        let record= await Favourite.findOne(
+            {
+                restaurantId:request.params.resId,
+                customerId:request.params.cusId
+            });
+    if(record)
+            return response.status(200).json({ message: "alredy added",status: true });
+        let favourite =await Favourite.create({restaurantId :request.params.resId , customerId:request.params.cusId});
+        return response.status(200).json({ favourite : favourite , status: true });
+    }
+    catch(err){
+        console.log(err);
+        return  response.status(500).json({error : "Internal server error",status: false});
+    }
 }
 
+
 export const removeFavourite = async (request,response,next)=>{
-    let record= await Favourite.deleteOne({
-            restaurantId:request.params.resId,
-            customerId:request.params.cusId
-    });
-    if(record)
-    return response.status(200).json({ msg : "favourite is removed" , status: true });
-    return response.status(200).json({ msg : "favourite is not removed" , status: false });
+    try{
+        let record= await Favourite.deleteOne({
+                restaurantId:request.params.resId,
+                customerId:request.params.cusId
+        });
+        if(record)
+        return response.status(200).json({ msg : "favourite is removed" , status: true });
+        return response.status(200).json({ msg : "favourite is not removed" , status: false });
+    }
+    catch(err){
+        console.log(err);
+        return  response.status(500).json({error : "Internal server error",status: false});
+    }
 }

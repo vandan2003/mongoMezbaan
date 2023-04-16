@@ -36,4 +36,18 @@ export const fetchByCus =async (request,response)=>{
     }
 }
 
-
+export const deleteReview = async (request,response,next)=>{
+    try{
+        let record= await Review.deleteOne({
+                _Id:request.params.reviewId,
+        });
+        console.log(record);
+        if(record.deletedCount)
+            return response.status(200).json({ msg : "Remove Success" , status: true });
+        return response.status(200).json({ msg : "Not Removed" , status: false });
+    }
+    catch(err){
+        console.log(err);
+        return response.status(500).json({error : "Internal server error",status:false});
+    }
+}
