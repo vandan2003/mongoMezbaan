@@ -15,7 +15,7 @@ const ReviewSchema  = new mongoose.Schema({
         required:true
     },
     date:{
-        type:String,
+        type: String,
         required:true
     },
     time:{
