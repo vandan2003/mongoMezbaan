@@ -1,6 +1,7 @@
 import db from "./dbConfig.js";
 import mongoose from "mongoose";
 
+
 const SubscriptionSchema = new mongoose.Schema({
     restaurantId:{
         type:mongoose.Schema.Types.ObjectId,

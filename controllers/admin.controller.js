@@ -2,6 +2,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { Admin } from "../models/admin.model.js";
+import { validationResult } from "express-validator";
 
 
 export const signIn = async (request, response, next) => {
@@ -84,6 +85,26 @@ export const changePassword = async (request, response, next) => {
   } catch (err) {
     console.log(err);
     return response.status(500).json({ error: "Internal Server Error", status: false });
+  }
+}
+
+export const saveAdmin = async (request, response) => {
+  try {
+    const errors = validationResult(request);
+    if (!errors.isEmpty())
+      return response.status(400).json({ error: "Bad request", status: false, errors: errors.array() });
+    const saltKey = await bcrypt.genSalt(10);
+    request.body.password = await bcrypt.hash(request.body.password, saltKey);
+
+    let admin = await Admin.create(request.body);
+    console.log(admin + "=========================================");
+    return response.status(200).json({ message: "Data Saved Successfully", admin: admin, status: true });
+
+
+  }
+  catch (err) {
+    console.log(err);
+
   }
 }
 
