@@ -1,4 +1,6 @@
-import express, { request, response } from "express";
+
+import express from "express";
+
 import { active, addCuisines, addFacilities, addImage, addMenu, block, changePassword, deny, list, profile, rate, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
 import multer from "multer";
 import { body } from "express-validator";
