@@ -6,7 +6,6 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { Rating } from "../models/rating.model.js";
 
-
 export const signuppage = (request, response) => {
     response.render("addRestaurant.ejs");
 }
