@@ -1,5 +1,5 @@
 import express from "express";
-import { addPlan, removePlan, subscribePlan, updatePlan } from "../controllers/plan.controller.js";
+import { addPlan, removePlan , subscribePlan, updatePlan } from "../controllers/plan.controller.js";
 
 const router = express.Router();
 router.post("/save",addPlan);

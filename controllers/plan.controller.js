@@ -6,14 +6,14 @@ export const addPlan = async (request,response,next) => {
   try {
       const errors = validationResult(request);
       if (!errors.isEmpty()) {
-         return response.status(400).json({ error: 'Bad request', messages: errors.array() });
+         return response.status(400).json({ msg: 'Bad request', msg: errors.array() });
       }
       const { planName, duration, price } = request.body; 
       const newPlan = await Plan.create( { planName, duration, price } );
       return response.status(200).json({ plan: newPlan, status: true });
   } catch (err) {
       console.log(err);
-      return res.status(500).json({ message: "plan Added Successfully...", error: 'Internal Server Error', status: false });
+      return res.status(500).json({ msg: "plan Added Successfully...", error: 'Internal Server Error', status: false });
   }
 }
   
@@ -25,13 +25,13 @@ export const addPlan = async (request,response,next) => {
         { $set: { planName: newplanName, duration: newduration, price: newprice } },
       );
       if (result==null) {
-        return response.status(404).json({ error: "plan not found", status: false });
+        return response.status(404).json({ msg: "plan not found", status: false });
       }
   
-      return response.status(200).json({ plan: result, message: "plan updated successfully......", status: true });
+      return response.status(200).json({ plan: result, msg: "plan updated successfully......", status: true });
     } catch (err){
        console.log(err);
-      return response.status(500).json({ error: "Internal Server Error", status: false });
+      return response.status(500).json({ msg: "Internal Server Error", status: false });
     }
 }
  
@@ -46,7 +46,7 @@ export const removePlan = async (request, response, next) => {
       return response.status(404).json({ error: "plan not found", status: false });
     }
 
-    return response.status(200).json({ plan: result, message: "plan removed successfully......", status: true });
+    return response.status(200).json({ plan: result, msg: "plan removed successfully......", status: true });
 
   } catch (err) {
     console.log(err);
@@ -58,25 +58,17 @@ export const removePlan = async (request, response, next) => {
 export const subscribePlan = async (request, response, next) => {
   try {
     const { restaurantId, planId, startingDate, endingDate } = request.body;
-
-    const restaurant = await Plan.findById(restaurantId);
-    if (!restaurant) {
+    console.log(planId)
+    const plan = await Plan.findById( {_id:planId});
+    if (!plan) {
       return response.status(404).json({ error: "Restaurant not found", status: false });
     }
-
-    // const subscription = new Subscription({
-    //   restaurant: restaurantid,
-    //   plan: planId,
-    //   startingDate: startingDate,
-    //   endingDate: endingDate
-    // });
-
-//    const result = await Subscription.save();
-
-  return response.status(200).json({ result: result, status: true });
+      const subscription = await Subscription.create( {  restaurantId, planId, startingDate, endingDate } );
+ 
+  return response.status(200).json({ result: subscription, status: true });
 
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Internal Server Error", status: false });
+    return response.status(500).json({ error: "Internal Server Error", status: false });
   }
 }
