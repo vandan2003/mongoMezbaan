@@ -1,5 +1,5 @@
 import express from "express";
-import { active, block, deny, list, profile, rate, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
+import { active, addCuisines, addFacilities, addImage, addMenu, block, changePassword, deny, list, profile, rate, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
 import multer from "multer";
 import { body } from "express-validator";
 
@@ -52,4 +52,22 @@ restRouter.post("/rate",rate);
 
 restRouter.get("/profile/:id",profile);
 
+
+restRouter.post("/remove-image/:img",removeImage);
+
+restRouter.post("/remove-menu/:img",removeMenu);
+
+restRouter.post("/remove-facility/:cuisine",removeFacility);
+
+restRouter.post("/change-password",changePassword);
+
+restRouter.post("/add-image",upload.any("pictures"),addImage);
+
+restRouter.post("/add-menu",upload.any("pictures"),addMenu);
+
+restRouter.post("/add-facilities",addFacilities);
+
+restRouter.post("/add-cuisines",addCuisines);
+
 export default restRouter;
+
