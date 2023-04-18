@@ -1,6 +1,6 @@
 
 import express from "express";
-
+import { adminTokenVerify, cusTokenVerify, resTokenVerify } from "../middleware/tokenVerification.js";
 import { active, addCuisines, addFacilities, addImage, addMenu, block, changePassword, deny, list, profile, rate, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
 import multer from "multer";
 import { body } from "express-validator";
@@ -40,34 +40,34 @@ body("email").isEmail(),
 body("password").notEmpty(),
 signIn)
 
-restRouter.get("/list",list);
+restRouter.get("/list",adminTokenVerify,list);
 
-restRouter.get("/block/:id",block);
+restRouter.get("/block/:id",adminTokenVerify,block);
 
-restRouter.get("/deny/:id",deny);
+restRouter.get("/deny/:id",adminTokenVerify,deny);
 
-restRouter.get("/active/:id",active);
+restRouter.get("/active/:id",adminTokenVerify,active);
 
 restRouter.get("/search/:key",searchRest);
 
-restRouter.post("/rate",rate);
+restRouter.post("/rate",cusTokenVerify,rate);
 
 restRouter.get("/profile/:id",profile);
 
-restRouter.post("/remove-image/:img",removeImage);
+restRouter.post("/remove-image/:img",resTokenVerify,removeImage);
 
-restRouter.post("/remove-menu/:img",removeMenu);
+restRouter.post("/remove-menu/:img",resTokenVerify,removeMenu);
 
-restRouter.post("/remove-facility/:cuisine",removeFacility);
+restRouter.post("/remove-facility/:cuisine",resTokenVerify,removeFacility);
 
-restRouter.post("/change-password",changePassword);
+restRouter.post("/change-password",resTokenVerify,changePassword);
 
-restRouter.post("/add-image",upload.any("pictures"),addImage);
+restRouter.post("/add-image",upload.any("pictures"),resTokenVerify,addImage);
 
-restRouter.post("/add-menu",upload.any("pictures"),addMenu);
+restRouter.post("/add-menu",upload.any("pictures"),resTokenVerify,addMenu);
 
-restRouter.post("/add-facilities",addFacilities);
+restRouter.post("/add-facilities",resTokenVerify,addFacilities);
 
-restRouter.post("/add-cuisines",addCuisines);
+restRouter.post("/add-cuisines",resTokenVerify,addCuisines);
 
 export default restRouter;

@@ -269,6 +269,7 @@ export const addMenu = async (request, response) => {
 export const addFacilities = async (request, response) => {
     try {
         let restaurant = await Restaurant.findById({ _id: request.body.restaurantId });
+        console.log(request.body.facilities);
         request.body.facilities.map(async (fac) => {
             await restaurant.facilities.push(fac);
         })
