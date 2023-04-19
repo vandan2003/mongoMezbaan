@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import { Rating } from "../models/rating.model.js";
 
 export const signuppage = (request, response) => {
-    response.render("addRestaurant.ejs");
+    return response.render("addRestaurant.ejs");
 }
 
 export const signUp = async (request, response) => {
@@ -70,9 +70,11 @@ export const list = (request, response) => {
 }
 
 export const block = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "BLOCKED" })
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "BLOCKED" })
         .then(res => {
             console.log(res);
+            if(!res)
+                return response.status(404).json({status:false,error:"Restaurant Not Found"})
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -82,21 +84,25 @@ export const block = async (request, response) => {
 }
 
 export const deny = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "DENY" })
-        .then(res => {
-            console.log(res);
-            return response.status(200).json({ status: true, res });
-        })
-        .catch(err => {
-            console.log(err);
-            return response.status(500).json({ status: false, err });
-        })
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "DENY" })
+    .then(res => {
+        console.log(res);
+        if(!res)
+            return response.status(404).json({status:false,error:"Restaurant Not Found"})
+        return response.status(200).json({ status: true, res });
+    })
+    .catch(err => {
+        console.log(err);
+        return response.status(500).json({ status: false, err });
+    })
 }
 
 export const active = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "ACTIVE" })
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "ACTIVE" })
         .then(res => {
             console.log(res);
+            if(!res)
+                return response.status(404).json({status:false,error:"Restaurant Not Found"})
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -269,8 +275,8 @@ export const addMenu = async (request, response) => {
 export const addFacilities = async (request, response) => {
     try {
         let restaurant = await Restaurant.findById({ _id: request.body.restaurantId });
-        request.body.facilities.map(async (fac) => {
-            await restaurant.facilities.push(fac);
+        request.body.facilities.map((fac) => {
+             restaurant.facilities.push(fac);
         })
         await restaurant.save();
         return response.status(200).json({ status: true, result: "Facilities added successfully" });
@@ -292,4 +298,36 @@ export const addCuisines = async (request, response) => {
         console.log(err);
         return response.status(500).json({ status: false, error: "Internal Server Error" })
     }
+}
+
+export const addBulk = async (request,response)=>{
+   try{
+    request.body.map(async (restaurant,index)=>{
+        Restaurant.create({
+            name: restaurant.name,
+            description: restaurant.description,
+            address:restaurant.location,
+            contact: restaurant.contact.split(" ")[1],
+            email: "restaurant"+index+"@gmail.com",
+            password: await bcrypt.hash('1234', await bcrypt.genSalt(10)),
+            openingTime:'10:00',
+            closingTime:'11:30',
+            totalTables:'200',
+            rating:4.5,
+            fssai:'1384791398471398',
+            type:restaurant.type,
+            lattitude:restaurant.latitude,
+            longitude:restaurant.longitude,
+            status:'active',
+            images:restaurant.images,
+            menus:restaurant.menus,
+            facilites: index%2 ? ['A.C.','Parking']:['Card','Sports T.V.'] ,
+            cuisines: index%2 ? ['South Indian','Chinese']:['Italian','Western','Rajasthani']
+        })
+    })
+
+    return response.status(200).json({res:"Everthing went well" , status:true})
+   }catch(err){
+    return response.status(500).json({err,status:false})
+   }
 }
