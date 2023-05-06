@@ -4,11 +4,14 @@ import mongoose from "mongoose";
 const BookingSchema = new mongoose.Schema({
     customerId:{
         type:mongoose.Schema.Types.ObjectId,
+
         required:true
+        ref:"customer"
     },
     restaurantId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true
+        required:true,
+        ref:"restaurant"
     },
     date:{
         type:String,
@@ -20,7 +23,6 @@ const BookingSchema = new mongoose.Schema({
     },
     status:{
         type:String,
-        required:true,
         default:"Pending"
     },
     extraInfo:{

@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import { Rating } from "../models/rating.model.js";
 
 export const signuppage = (request, response) => {
-    response.render("addRestaurant.ejs");
+    return response.render("addRestaurant.ejs");
 }
 
 export const signUp = async (request, response) => {
@@ -70,9 +70,11 @@ export const list = (request, response) => {
 }
 
 export const block = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "BLOCKED" })
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "BLOCKED" })
         .then(res => {
             console.log(res);
+            if(!res)
+                return response.status(404).json({status:false,error:"Restaurant Not Found"})
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -82,19 +84,26 @@ export const block = async (request, response) => {
 }
 
 export const deny = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "DENY" })
-        .then(res => {
-            return response.status(200).json({ status: true, res });
-        })
-        .catch(err => {
-            console.log(err);
-            return response.status(500).json({ status: false, err });
-        })
+
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "DENY" })
+    .then(res => {
+        console.log(res);
+        if(!res)
+            return response.status(404).json({status:false,error:"Restaurant Not Found"})
+        return response.status(200).json({ status: true, res });
+    })
+    .catch(err => {
+        console.log(err);
+        return response.status(500).json({ status: false, err });
+    })
 }
 
 export const active = async (request, response) => {
-    Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "ACTIVE" })
+    Restaurant.findOneAndUpdate({ _id:request.params.id }, { status: "ACTIVE" })
         .then(res => {
+            if(!res)
+                return response.status(404).json({status:false,error:"Restaurant Not Found"})
+
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -108,7 +117,11 @@ export const searchRest = (request, response) => {
         $or: [
             { 'name': { $regex: '.*' + request.body.key + '.*' } },
             { 'description': { $regex: '.*' + request.body.key + '.*' } },
-            { 'address': { $regex: '.*' + request.body.key + '.*' } }
+            { 'address.city': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address.details': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address.state': { $regex: '.*' + request.body.key + '.*' } },
+            { 'cuisines':{$elemMatch: { $regex: '.*' + request.body.key + '.*' }} },
+            { 'facilities':{$elemMatch: { $regex: '.*' + request.body.key + '.*' }} }
         ]
     })
         .then(res => {
@@ -267,9 +280,9 @@ export const addMenu = async (request, response) => {
 export const addFacilities = async (request, response) => {
     try {
         let restaurant = await Restaurant.findById({ _id: request.body.restaurantId });
-        console.log(request.body.facilities);
-        request.body.facilities.map(async (fac) => {
-            await restaurant.facilities.push(fac);
+        request.body.facilities.map((fac) => {
+             restaurant.facilities.push(fac);
+
         })
         await restaurant.save();
         return response.status(200).json({ status: true, result: "Facilities added successfully" });
@@ -292,6 +305,7 @@ export const addCuisines = async (request, response) => {
         return response.status(500).json({ status: false, error: "Internal Server Error" })
     }
 }
+
 
 export const pendingList = (request, response) => {
     Restaurant.find({status : "pending"} )
@@ -330,4 +344,73 @@ export const activeList = (request, response) => {
             console.log(err);
             return response.status(500).json({ status: false, err: "Internal Server Error" })
         })
+}
+
+export const addBulk = async (request,response)=>{
+    let fac =  ["A.C.","Parking","Card","Sports T.V."];
+   try{
+    await Restaurant.deleteMany();
+    request.body.map(async (restaurant,index)=>{
+        console.log(restaurant.name)
+        Restaurant.create({
+            name: restaurant.name,
+            description: "Best Service and Cuisine for you. This can be the place you were looking for",
+            address:{
+                lattitude:restaurant.latitude,
+                longitude:restaurant.longitude,
+                details:restaurant.locality,
+                city:"Indore",
+                state:"Madhya Pradesh"
+            },
+            contact: "9009234455",
+            email: restaurant.name.replaceAll(" ",".").toLowerCase() +"@gmail.com",
+            password: await bcrypt.hash('1234', await bcrypt.genSalt(10)),
+            openingTime:'10:00',
+            closingTime:'11:30',
+            totalTables:'200',
+            
+            rating: restaurant.aggregate_rating,
+            fssai:'1384791398471398',
+            type:"Both",
+            avgCostPer2:restaurant.average_cost_for_two,
+            status:index%2?'active':'pending',
+            images: ["main.jpg","main1.jpg","main3.jpg","main4.jpg"], 
+            facilities: fac ,
+            menus:index%2 ? "menu1.jpg":"menu2.jpg",
+            cuisines: restaurant.cuisines.split(",")
+        })
+    })
+
+    return response.status(200).json({res:"Everthing went well" , status:true})
+   }catch(err){
+    return response.status(500).json({err,status:false})
+   }
+}
+
+
+export const atYourCity = async(request,response)=>{
+    try{
+       let result = await Restaurant.find({"address.city":request.body.city}).limit(3);
+       return response.status(200).json({status:true,result});
+    }catch(err){
+        return response.status(500).json({status:false,err:"Something went wrong"})
+    }
+}
+
+export const dropCollection =async(request,response)=>{
+    try{
+        await Restaurant.deleteMany();
+        return response.status(200).json({status:true,res:"Success"})
+    }catch(err){
+        return response.status(500).json({status:false,err})
+    }
+}
+
+export const topRatedFour = async(request,response)=>{
+    try{
+        let result = await Restaurant.find().sort({rating:-1}).limit(4);
+        return response.status(200).json({status:true,result});
+    }catch(err){
+        return response.status(500).json({status:false,err:"Internal Server Error"})
+    }
 }

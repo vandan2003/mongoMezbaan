@@ -97,7 +97,6 @@ export const saveAdmin = async (request, response) => {
     request.body.password = await bcrypt.hash(request.body.password, saltKey);
 
     let admin = await Admin.create(request.body);
-    console.log(admin + "=========================================");
     return response.status(200).json({ msg: "Data Saved Successfully", admin: admin, status: true });
 
 

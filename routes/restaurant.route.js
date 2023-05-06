@@ -1,7 +1,10 @@
 
 import express from "express";
 import { adminTokenVerify, cusTokenVerify, resTokenVerify } from "../middleware/tokenVerification.js";
-import {activeList, active, addCuisines, addFacilities, addImage, addMenu, block, changePassword, deny, list, pendingList, profile, rate, removeFacility, removeImage, removeMenu, restCount, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
+
+import express, { request, response } from "express";
+import {activeList, active, addBulk, addCuisines, addFacilities, addImage, addMenu,pendingList, atYourCity, block, changePassword, deny, dropCollection, list, profile, rate, removeCuisine, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage, topRatedFour ,restCount } from "../controllers/restaurant.controller.js";
+
 import multer from "multer";
 import { body } from "express-validator";
 
@@ -64,7 +67,14 @@ restRouter.post("/change-password",resTokenVerify,changePassword);
 
 restRouter.post("/add-image",upload.any("pictures"),resTokenVerify,addImage);
 
+
 restRouter.post("/add-menu",upload.any("pictures"),resTokenVerify,addMenu);
+
+restRouter.post("/remove-facility/:fac",removeFacility);
+
+restRouter.post("/remove-cuisine/:cuisine",removeCuisine);
+
+
 
 restRouter.post("/add-facilities",resTokenVerify,addFacilities);
 
@@ -75,5 +85,13 @@ restRouter.get("/requested-restaurant",pendingList);
 restRouter.get("/count",restCount);
 
 restRouter.get("/active-restaurant",activeList);
+
+restRouter.post("/add-bulk",addBulk);
+
+restRouter.post("/at-your-city",atYourCity);
+
+restRouter.get("/drop",dropCollection);
+
+restRouter.get("/top-rated-four",topRatedFour);
 
 export default restRouter;
