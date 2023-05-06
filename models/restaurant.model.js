@@ -13,8 +13,26 @@ const RestaurantSchema  = new mongoose.Schema({
         trim:true
     },
     address:{
-        type:String,
-        required:true
+        lattitude:{
+            type:String,
+            required:true
+        },
+        longitude:{
+            type:String,
+           required:true
+        },
+        city:{
+            type:String,
+            required:true
+        },
+        state:{
+            type:String,
+            required:true
+        },
+        details:{
+            type:String,
+            // required:true
+        }
     },
     contact:{
         type:String,
@@ -50,17 +68,9 @@ const RestaurantSchema  = new mongoose.Schema({
     },
     type:{
         type:String,
-        required:false
-    },
-    avgCostPer2:{
-        type:String,
-       required:false
-    },
-    lattitude:{
-        type:String,
         required:true
     },
-    longitude:{
+    avgCostPer2:{
         type:String,
        required:true
     },
@@ -75,7 +85,8 @@ const RestaurantSchema  = new mongoose.Schema({
         type:String
     }],
     facilities:[{
-        type:String
+        type:String,
+        required:true
     }],
     cuisines:[{
         type:String

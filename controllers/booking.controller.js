@@ -4,8 +4,9 @@ import { Booking } from "../models/booking.model.js";
 
 export const confirm = async (request,response) => {
   try {
-    const { customerId,restaurantId,date,time,status,extraInfo,bookingAmount,totalGuests } = request.body; 
-      const newBooking = await Booking.create( { customerId,restaurantId,date,time,status,extraInfo,bookingAmount,totalGuests } );
+    const { customerId,restaurantId,date,time,extraInfo,bookingAmount,totalGuests } = request.body; 
+    console.log(request.body);
+      const newBooking = await Booking.create( { customerId,restaurantId,date,time,extraInfo,bookingAmount,totalGuests } );
       response.status(200).json({ status: true, res: newBooking, msg: "Booking success" });
   } catch (err) {
     console.log(err);
@@ -18,7 +19,7 @@ export const cancel = async (request, response, next) => {
   try {
 
     const id = request.body._id;
-    const result = await Booking.findOneAndDelete({ _id: id });
+    const result = await Booking.updateOne({ _id: id },{status:"canceled"});
 
     if (!result) {
       return response.status(404).json({ msg: "booking not found", status: false });

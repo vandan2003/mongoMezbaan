@@ -4,11 +4,13 @@ import mongoose from "mongoose";
 const FavouriteSchema = new mongoose.Schema({
     customerId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true
+        required:true,
+        ref:"customer"
     },
     restaurantId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true
+        required:true,
+        ref:"restaurant"
     }
 })
 

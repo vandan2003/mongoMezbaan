@@ -1,5 +1,5 @@
 import express from "express";
-import { addToFavourite, block, fetch, removeFavourite, signin, signup, update, updatePassword } from "../controllers/customer.controller.js";
+import { addToFavourite, block, fetch, getFavourites, googleSignin, removeFavourite, signin, signup, update, updatePassword } from "../controllers/customer.controller.js";
 import { body } from "express-validator";
 
 const router = express.Router();
@@ -20,8 +20,11 @@ router.get("/profile/:custId",fetch);
 router.get("/block/:custId",block);
 router.post("/edit-profile",update);
 router.post("/change-password",updatePassword);//newPassword,custId,password
-router.get("/add-to-favourite/:resId/:cusId",addToFavourite);//crection
-router.get("/remove-favourite/:resId/:cusId",removeFavourite);//crection
+router.post("/add-to-favourite/",addToFavourite);//crection
+router.post("/remove-favourite/",removeFavourite);//crection
+router.post("/get-favourites",getFavourites);
+router.post("/google-signin",googleSignin);
+router.post("/signup",signup);
 
 
 export default router;

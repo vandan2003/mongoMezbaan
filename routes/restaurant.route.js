@@ -1,7 +1,7 @@
 
-import express from "express";
+import express, { request, response } from "express";
+import { active, addBulk, addCuisines, addFacilities, addImage, addMenu, atYourCity, block, changePassword, deny, dropCollection, list, profile, rate, removeCuisine, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage, topRatedFour } from "../controllers/restaurant.controller.js";
 
-import { active, addCuisines, addFacilities, addImage, addMenu, block, changePassword, deny, list, profile, rate, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage } from "../controllers/restaurant.controller.js";
 import multer from "multer";
 import { body } from "express-validator";
 
@@ -48,7 +48,7 @@ restRouter.get("/deny/:id",deny);
 
 restRouter.get("/active/:id",active);
 
-restRouter.get("/search/:key",searchRest);
+restRouter.post("/search",searchRest);
 
 restRouter.post("/rate",rate);
 
@@ -58,7 +58,10 @@ restRouter.post("/remove-image/:img",removeImage);
 
 restRouter.post("/remove-menu/:img",removeMenu);
 
-restRouter.post("/remove-facility/:cuisine",removeFacility);
+restRouter.post("/remove-facility/:fac",removeFacility);
+
+restRouter.post("/remove-cuisine/:cuisine",removeCuisine);
+
 
 restRouter.post("/change-password",changePassword);
 
@@ -69,5 +72,13 @@ restRouter.post("/add-menu",upload.any("pictures"),addMenu);
 restRouter.post("/add-facilities",addFacilities);
 
 restRouter.post("/add-cuisines",addCuisines);
+
+restRouter.post("/add-bulk",addBulk);
+
+restRouter.post("/at-your-city",atYourCity);
+
+restRouter.get("/drop",dropCollection);
+
+restRouter.get("/top-rated-four",topRatedFour);
 
 export default restRouter;
