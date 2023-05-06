@@ -14,6 +14,7 @@ import reviewRouter from "./routes/review.route.js"
 import colonyRouter from "./routes/colony.route.js"
 import PaymentRouter from "./routes/payment.route.js"
 import VisitRouter from "./routes/visit.routes.js"
+
 const app = express();
 
 app.set("view-engine","ejs");
@@ -34,6 +35,7 @@ app.use("/booking",BookingRouter);
 app.use("/customer",customerRouter);
 app.use("/review",reviewRouter);
 
+
 app.use("/payment",PaymentRouter);
 
 app.use("/visit",VisitRouter);
@@ -46,5 +48,6 @@ app.get('/image/:filename', function (req, res) {
 app.use("/colony",colonyRouter);
 
 app.listen(3000,()=>{
+
     console.log("Server Started Mongo Mezbaan . . .");
 })

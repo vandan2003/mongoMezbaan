@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 const BookingSchema = new mongoose.Schema({
     customerId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
+
+        required:true
         ref:"customer"
     },
     restaurantId:{

@@ -1,6 +1,9 @@
 
+import express from "express";
+import { adminTokenVerify, cusTokenVerify, resTokenVerify } from "../middleware/tokenVerification.js";
+
 import express, { request, response } from "express";
-import { active, addBulk, addCuisines, addFacilities, addImage, addMenu, atYourCity, block, changePassword, deny, dropCollection, list, profile, rate, removeCuisine, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage, topRatedFour } from "../controllers/restaurant.controller.js";
+import {activeList, active, addBulk, addCuisines, addFacilities, addImage, addMenu,pendingList, atYourCity, block, changePassword, deny, dropCollection, list, profile, rate, removeCuisine, removeFacility, removeImage, removeMenu, searchRest, signIn, signUp, signuppage, topRatedFour ,restCount } from "../controllers/restaurant.controller.js";
 
 import multer from "multer";
 import { body } from "express-validator";
@@ -42,36 +45,46 @@ signIn)
 
 restRouter.get("/list",list);
 
-restRouter.get("/block/:id",block);
+restRouter.get("/block/:id",adminTokenVerify,block);
 
-restRouter.get("/deny/:id",deny);
+restRouter.get("/deny/:id",adminTokenVerify,deny);
 
-restRouter.get("/active/:id",active);
+restRouter.get("/active/:id",adminTokenVerify,active);
 
 restRouter.post("/search",searchRest);
 
-restRouter.post("/rate",rate);
+restRouter.post("/rate",cusTokenVerify,rate);
 
 restRouter.get("/profile/:id",profile);
 
-restRouter.post("/remove-image/:img",removeImage);
+restRouter.post("/remove-image/:img",resTokenVerify,removeImage);
 
-restRouter.post("/remove-menu/:img",removeMenu);
+restRouter.post("/remove-menu/:img",resTokenVerify,removeMenu);
+
+restRouter.post("/remove-facility/:cuisine",resTokenVerify,removeFacility);
+
+restRouter.post("/change-password",resTokenVerify,changePassword);
+
+restRouter.post("/add-image",upload.any("pictures"),resTokenVerify,addImage);
+
+
+restRouter.post("/add-menu",upload.any("pictures"),resTokenVerify,addMenu);
 
 restRouter.post("/remove-facility/:fac",removeFacility);
 
 restRouter.post("/remove-cuisine/:cuisine",removeCuisine);
 
 
-restRouter.post("/change-password",changePassword);
 
-restRouter.post("/add-image",upload.any("pictures"),addImage);
+restRouter.post("/add-facilities",resTokenVerify,addFacilities);
 
-restRouter.post("/add-menu",upload.any("pictures"),addMenu);
+restRouter.post("/add-cuisines",resTokenVerify,addCuisines);
 
-restRouter.post("/add-facilities",addFacilities);
+restRouter.get("/requested-restaurant",pendingList);
 
-restRouter.post("/add-cuisines",addCuisines);
+restRouter.get("/count",restCount);
+
+restRouter.get("/active-restaurant",activeList);
 
 restRouter.post("/add-bulk",addBulk);
 
