@@ -114,9 +114,13 @@ export const active = async (request, response) => {
 export const searchRest = (request, response) => {
     Restaurant.find({
         $or: [
-            { 'name': { $regex: '.*' + request.params.key + '.*' } },
-            { 'description': { $regex: '.*' + request.params.key + '.*' } },
-            { 'address': { $regex: '.*' + request.params.key + '.*' } }
+            { 'name': { $regex: '.*' + request.body.key + '.*' } },
+            { 'description': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address.city': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address.details': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address.state': { $regex: '.*' + request.body.key + '.*' } },
+            { 'cuisines':{$elemMatch: { $regex: '.*' + request.body.key + '.*' }} },
+            { 'facilities':{$elemMatch: { $regex: '.*' + request.body.key + '.*' }} }
         ]
     })
         .then(res => {
@@ -301,28 +305,37 @@ export const addCuisines = async (request, response) => {
 }
 
 export const addBulk = async (request,response)=>{
+    let fac =  ["A.C.","Parking","Card","Sports T.V."];
    try{
+    await Restaurant.deleteMany();
     request.body.map(async (restaurant,index)=>{
+        console.log(restaurant.name)
         Restaurant.create({
             name: restaurant.name,
-            description: restaurant.description,
-            address:restaurant.location,
-            contact: restaurant.contact.split(" ")[1],
-            email: "restaurant"+index+"@gmail.com",
+            description: "Best Service and Cuisine for you. This can be the place you were looking for",
+            address:{
+                lattitude:restaurant.latitude,
+                longitude:restaurant.longitude,
+                details:restaurant.locality,
+                city:"Indore",
+                state:"Madhya Pradesh"
+            },
+            contact: "9009234455",
+            email: restaurant.name.replaceAll(" ",".").toLowerCase() +"@gmail.com",
             password: await bcrypt.hash('1234', await bcrypt.genSalt(10)),
             openingTime:'10:00',
             closingTime:'11:30',
             totalTables:'200',
-            rating:4.5,
+            
+            rating: restaurant.aggregate_rating,
             fssai:'1384791398471398',
-            type:restaurant.type,
-            lattitude:restaurant.latitude,
-            longitude:restaurant.longitude,
-            status:'active',
-            images:restaurant.images,
-            menus:restaurant.menus,
-            facilites: index%2 ? ['A.C.','Parking']:['Card','Sports T.V.'] ,
-            cuisines: index%2 ? ['South Indian','Chinese']:['Italian','Western','Rajasthani']
+            type:"Both",
+            avgCostPer2:restaurant.average_cost_for_two,
+            status:index%2?'active':'pending',
+            images: ["main.jpg","main1.jpg","main3.jpg","main4.jpg"], 
+            facilities: fac ,
+            menus:index%2 ? "menu1.jpg":"menu2.jpg",
+            cuisines: restaurant.cuisines.split(",")
         })
     })
 
@@ -330,4 +343,32 @@ export const addBulk = async (request,response)=>{
    }catch(err){
     return response.status(500).json({err,status:false})
    }
+}
+
+
+export const atYourCity = async(request,response)=>{
+    try{
+       let result = await Restaurant.find({"address.city":request.body.city}).limit(3);
+       return response.status(200).json({status:true,result});
+    }catch(err){
+        return response.status(500).json({status:false,err:"Something went wrong"})
+    }
+}
+
+export const dropCollection =async(request,response)=>{
+    try{
+        await Restaurant.deleteMany();
+        return response.status(200).json({status:true,res:"Success"})
+    }catch(err){
+        return response.status(500).json({status:false,err})
+    }
+}
+
+export const topRatedFour = async(request,response)=>{
+    try{
+        let result = await Restaurant.find().sort({rating:-1}).limit(4);
+        return response.status(200).json({status:true,result});
+    }catch(err){
+        return response.status(500).json({status:false,err:"Internal Server Error"})
+    }
 }
