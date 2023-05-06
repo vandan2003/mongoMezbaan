@@ -140,3 +140,29 @@ export const removeFavourite = async (request,response,next)=>{
         return  response.status(500).json({error : "Internal server error",status: false});
     }
 }
+
+export const customerCount = async(request,response,next)=>{
+    try{
+        var query = Booking.find({});
+        let record= await query.count(); 
+        if(record) 
+        return response.status(200).json({record:record, msg : "Number of Customer" , status: true });
+ 
+    }catch(err){
+        console.log(err);
+        return  response.status(500).json({error : "Internal server error",status: false});
+    } 
+}
+
+export const custCount = async(request,response,next)=>{
+    try{
+        var query = Customer.find({});
+        let record= await query.count(); 
+        if(record) 
+        return response.status(200).json({record:record, msg : "Number of Customer" , status: true });
+ 
+    }catch(err){
+        console.log(err);
+        return  response.status(500).json({error : "Internal server error",status: false});
+    } 
+}

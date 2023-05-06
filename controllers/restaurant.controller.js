@@ -84,7 +84,6 @@ export const block = async (request, response) => {
 export const deny = async (request, response) => {
     Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "DENY" })
         .then(res => {
-            console.log(res);
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -96,7 +95,6 @@ export const deny = async (request, response) => {
 export const active = async (request, response) => {
     Restaurant.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(request.params.id) }, { status: "ACTIVE" })
         .then(res => {
-            console.log(res);
             return response.status(200).json({ status: true, res });
         })
         .catch(err => {
@@ -108,9 +106,9 @@ export const active = async (request, response) => {
 export const searchRest = (request, response) => {
     Restaurant.find({
         $or: [
-            { 'name': { $regex: '.*' + request.params.key + '.*' } },
-            { 'description': { $regex: '.*' + request.params.key + '.*' } },
-            { 'address': { $regex: '.*' + request.params.key + '.*' } }
+            { 'name': { $regex: '.*' + request.body.key + '.*' } },
+            { 'description': { $regex: '.*' + request.body.key + '.*' } },
+            { 'address': { $regex: '.*' + request.body.key + '.*' } }
         ]
     })
         .then(res => {
@@ -293,4 +291,43 @@ export const addCuisines = async (request, response) => {
         console.log(err);
         return response.status(500).json({ status: false, error: "Internal Server Error" })
     }
+}
+
+export const pendingList = (request, response) => {
+    Restaurant.find({status : "pending"} )
+        .then(res => {
+            if (!res.length)
+                return response.status(404).json({ status: false, err: "NOt available" });
+            return response.status(200).json({ status: true, res })
+        })
+        .catch(err => {
+            console.log(err);
+            return response.status(500).json({ status: false, err: "Internal Server Error" })
+        })
+}
+
+export const restCount = async(request,response,next)=>{
+    try{
+        var query = Restaurant.find({});
+        let record= await query.count(); 
+        if(record) 
+        return response.status(200).json({record:record, msg : "Number of Restaurent" , status: true });
+ 
+    }catch(err){
+        console.log(err);
+        return  response.status(500).json({error : "Internal server error",status: false});
+    } 
+}
+
+export const activeList = (request, response) => {
+    Restaurant.find({status : "active"} )
+        .then(res => {
+            if (!res.length)
+                return response.status(404).json({ status: false, err: "NOt available" });
+            return response.status(200).json({ status: true, res })
+        })
+        .catch(err => {
+            console.log(err);
+            return response.status(500).json({ status: false, err: "Internal Server Error" })
+        })
 }

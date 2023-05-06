@@ -57,3 +57,16 @@ export const historyRest = async (request,response) => {
     response.status(500).json({ status: false, msg: "Something went wrong" });
   }
 };
+
+export const bookingCount = async(request,response,next)=>{
+  try{
+      var booking = await Booking.find({ restaurantId: request.params.id }).count();
+      
+      if(booking) 
+      return response.status(200).json({record:booking, msg : "Number of Bookings" , status: true });
+
+  }catch(err){
+      console.log(err);
+      return  response.status(500).json({error : "Internal server error",status: false});
+  } 
+}

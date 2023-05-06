@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 
 const BookingSchema = new mongoose.Schema({
     customerId:{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
         required:true
     },
     restaurantId:{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
         required:true
     },
     date:{
