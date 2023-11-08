@@ -1,5 +1,3 @@
-
-import express from "express";
 import { adminTokenVerify, cusTokenVerify, resTokenVerify } from "../middleware/tokenVerification.js";
 
 import express, { request, response } from "express";

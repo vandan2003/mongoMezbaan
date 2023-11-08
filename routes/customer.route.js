@@ -1,5 +1,5 @@
 import express from "express";
-import { addToFavourite, block,custCount, fetch, getFavourites, googleSignin, removeFavourite, signin, signup, update, updatePassword } from "../controllers/customer.controller.js";
+import { addToFavourite, block,custCount, customerCount, fetch, getFavourites, googleSignin, removeFavourite, signin, signup, update, updatePassword } from "../controllers/customer.controller.js";
 
 import { body } from "express-validator";
 import { adminTokenVerify, cusTokenVerify, resTokenVerify} from "../middleware/tokenVerification.js"

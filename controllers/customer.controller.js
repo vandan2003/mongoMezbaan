@@ -176,7 +176,6 @@ export const custCount = async(request,response,next)=>{
         return  response.status(500).json({error : "Internal server error",status: false});
     } 
 }
-=======
 export const getFavourites = async (request, response, next) => {
     try {
         let record = await Favourite.find({
